@@ -197,7 +197,18 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     logger.info("Starting bot...")
 
-    app = Application.builder().token(TELEGRAM_TOKEN).build()
+    # Build application with extended timeouts
+    app = (
+        Application.builder()
+        .token(TELEGRAM_TOKEN)
+        .connect_timeout(30.0)
+        .read_timeout(30.0)
+        .write_timeout(30.0)
+        .pool_timeout(30.0)
+        .get_updates_connect_timeout(30.0)
+        .get_updates_read_timeout(30.0)
+        .build()
+    )
 
     # Command handlers
     app.add_handler(CommandHandler("start", start))
@@ -215,7 +226,10 @@ def main():
     print("Telegram Image Generator Bot is ACTIVE")
     print("=" * 50 + "\n")
 
-    app.run_polling(allowed_updates=Update.ALL_TYPES)
+    # Run polling with retry settings
+    app.run_polling(
+        allowed_updates=Update.ALL_TYPES, drop_pending_updates=True, timeout=30
+    )
 
 
 if __name__ == "__main__":
