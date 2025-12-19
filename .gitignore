@@ -4,3 +4,4 @@ logs/
 generated_images/
 __pycache__/
 *.pyc
+uploaded_images/
